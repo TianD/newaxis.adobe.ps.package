@@ -55,9 +55,9 @@ class App extends Component {
     }
   }
 
-  async click_publish_layers() {
+  async click_flat_layers() {
     try {
-      await evalExtendscript("publish_layers();")
+      await evalExtendscript("flat_layers();")
     } catch (error) {
       alert(error);
     }
@@ -78,7 +78,7 @@ class App extends Component {
         <div>
           <PrimaryButton onClick={this.click_create_layers.bind(this)}>Create Layer Template</PrimaryButton>
           <PrimaryButton onClick={this.click_check_layers.bind(this)}>Check Layers</PrimaryButton>
-          <PrimaryButton onClick={this.click_publish_layers.bind(this)}>Publish Layers</PrimaryButton>
+          <PrimaryButton onClick={this.click_flat_layers.bind(this)}>Flat Layers</PrimaryButton>
           <PrimaryButton onClick={this.push_button.bind(this)}>Test Button</PrimaryButton>
           <PrimaryButton onClick={this.a_button.bind(this)}>{this.state.label}</PrimaryButton>
         </div>

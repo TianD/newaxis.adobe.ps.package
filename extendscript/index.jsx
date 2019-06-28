@@ -43,6 +43,7 @@ function _check_layer(layer, regRule, typeRule) {
     try {
         var layerName = layer.name;
         var layerType = layer.typename;
+        alert(layerName, LayerType, regRule, typeRule)
         if (layerType !== typeRule) {
             return false;
         }
@@ -52,7 +53,7 @@ function _check_layer(layer, regRule, typeRule) {
         }
         return false;
     } catch (x_x) {
-        alert$.writeln([
+        alert([
             x_x.message,
             x_x.line,
             $.stack,
@@ -142,6 +143,32 @@ function _create_layer_hierarchy(layerType, layerCode, parentLayer, childrenInfo
 
 }
 
+function _flat_layer_hierarchy(layer, parentLayerName) {
+    try {
+        if (layer.typename === 'LayerSet') {
+            var subLayers = layer.layers;
+            var nums = subLayers.length
+            for (var i = 0; i < nums; i++) {
+                var parentName = [parentLayerName, layer.name].join('_')
+                _flat_layer_hierarchy(subLayers[i], layer.name)
+            }
+        } else {
+            if (layer.parent === app.activeDocument) {
+                return
+            }
+            layer.name = [parentLayerName, layer.name].join('_')
+            layer.moveToEnd(app.activeDocument)
+        }
+    } catch (x_x) {
+        alert([
+            x_x,
+            x_x.message,
+            x_x.line,
+            $.stack,
+        ].join("\n"));
+    }
+}
+
 function create_layers() {
     var parentLayer = null;
     for (var index in layerTemplate) {
@@ -175,7 +202,7 @@ function check_layers() {
         return json_result;
     } catch (x_x) {
         alert([
-            x_x, 
+            x_x,
             x_x.message,
             x_x.line,
             $.stack,
@@ -184,14 +211,26 @@ function check_layers() {
 
 };
 
-function publish_layers() {
-    return JSON.stringify([{
-        key: 1,
-        name: 'abc',
-        flag: 'false'
-    }, {
-        key: 2,
-        name: 'def',
-        flag: 'true'
-    }])
+function flat_layers() {
+    try {
+        var layers = app.activeDocument.layers;
+        var nums = layers.length;
+        var rootname = '';
+        for (var i = 0; i < nums; i++) {
+            _flat_layer_hierarchy(layers[i], rootname);
+        }
+    } catch (x_x) {
+        alert([
+            x_x,
+            x_x.message,
+            x_x.line,
+            $.stack,
+        ].join("\n"));
+    }
+    for( var j =0; j<nums; j++){
+        if(layers[j].typename === 'LayerSet'){
+            layers[j].remove()
+        }
+    }
+
 };
